@@ -60,12 +60,15 @@ public class MyUI extends UI {
 
 		tfColumns = new TextField();
 		tfColumns.setCaption("column count");
+		tfColumns.setId("columncount");
 		tfColumns.setValue("10");
 		tfHiddenColumns = new TextField();
 		tfHiddenColumns.setCaption("hidden column count");
+		tfHiddenColumns.setId("hiddencolumncount");
 		tfHiddenColumns.setValue("10");
 		tfRows = new TextField();
 		tfRows.setCaption("row count");
+		tfRows.setId("rowcount");
 		tfRows.setValue("1000");
 
 		HorizontalLayout horLayout = new HorizontalLayout();
@@ -77,6 +80,7 @@ public class MyUI extends UI {
 
 		// Create new Grid with gridEntries
 		final Button hideShowButton = new Button("hide Grid");
+		hideShowButton.setId("gridButton");
 		hideShowButton.addClickListener(event -> {
 			if (grid.isVisible()) {
 				grid.setVisible(false);
@@ -154,7 +158,8 @@ public class MyUI extends UI {
 
 		grid.setColumnReorderingAllowed(true);
 		grid.setFrozenColumnCount(1);
-
+		grid.setId("testGrid");
+		
 		grid.setSizeFull();
 
 		// Activate multi selection mode

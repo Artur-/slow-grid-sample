@@ -47,13 +47,56 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<!-- Not needed ... gets pulled in via vaadin-testbench-api
 		<dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>jsr305</artifactId>
-      <version>3.0.2</version>
-      <scope>provided</scope>
-    </dependency>
-    
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-testbench</artifactId>
+			<version>5.0.0</version>
+			<scope>test</scope>
+		</dependency>
+		 -->
+		 
+		<dependency>
+		    <groupId>com.vaadin</groupId>
+		    <artifactId>vaadin-testbench-api</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.seleniumhq.selenium</groupId>
+		    <artifactId>selenium-java</artifactId>
+		    <version>3.7.1</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.seleniumhq.selenium</groupId>
+		    <artifactId>selenium-remote-driver</artifactId>
+		    <version>3.7.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- detect WebDriver and load correct one (https://github.com/bonigarcia/webdrivermanager) -->
+		<!-- Important: for older browser versions the version of the drivers might need to be specified: -->
+		<!-- e.g. with parameter adding -Dwdm.chromeDriverVersion=2.31 for supporting Chrome 58 -->
+		<dependency>
+		    <groupId>io.github.bonigarcia</groupId>
+		    <artifactId>webdrivermanager</artifactId>
+		    <version>2.0.0</version>
+		</dependency>
+		
+		<!-- logback -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
@@ -130,7 +173,52 @@
 				<configuration>
 					<scanIntervalSeconds>2</scanIntervalSeconds>
 				</configuration>
+				
+				<executions>
+					<!-- start Jetty in pre-integration-test -->
+					<execution>
+                           <id>start-jetty</id>
+                           <phase>pre-integration-test</phase>
+                           <goals>
+                               <goal>start</goal>
+                           </goals>
+                           <configuration>
+							<daemon>true</daemon>
+							<reload>manual</reload>
+						</configuration>
+                       </execution>
+                       <!-- and stop Jetty in post-integration-test -->
+                       <execution>
+                           <id>stop-jetty</id>
+                           <phase>post-integration-test</phase>
+                           <goals>
+                               <goal>stop</goal>
+                           </goals>
+                           <configuration>
+                               <stopKey>stop</stopKey>
+                           </configuration>
+                       </execution>
+				</executions>
 			</plugin>
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-failsafe-plugin</artifactId>
+			    <version>2.20.1</version>
+			    <executions>
+			        <execution>
+			            <id>performance-ui-tests</id>
+			            <phase>integration-test</phase>
+			            <goals>
+			                <goal>integration-test</goal>
+			            </goals>
+			            <configuration>
+			                <skip>false</skip>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 
@@ -143,7 +231,7 @@
 			</activation>
 
 			<repositories>
-        <repository>
+        		<repository>
 					<id>vaadin-prereleases</id>
 					<url>http://maven.vaadin.com/vaadin-prereleases</url>
 				</repository>
@@ -159,7 +247,7 @@
 				</repository>
 			</repositories>
 			<pluginRepositories>
-        <pluginRepository>
+		        <pluginRepository>
 					<id>vaadin-prereleases</id>
 					<url>http://maven.vaadin.com/vaadin-prereleases</url>
 				</pluginRepository>
