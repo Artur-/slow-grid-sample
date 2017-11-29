@@ -7,11 +7,7 @@
 	<artifactId>slowgrid</artifactId>
 	<packaging>war</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>grid1000select</name>
-
-	<prerequisites>
-		<maven>3</maven>
-	</prerequisites>
+	<name>slow-grid-sample</name>
 
 	<properties>
 		<vaadin.version>8.1.6</vaadin.version>
