@@ -1,0 +1,33 @@
+*.class
+*.iml
+*.releaseBackup
+*.cache
+.factorypath
+.classpath
+.project
+.mvn/
+git.properties
+
+#exclude all build directories
+target
+target-ide
+bin
+
+.webcache
+
+# never commit log files
+logs/
+log/
+*.log
+
+.idea
+
+# eclipse settings
+.settings/*
+# except those:
+!.settings/org.eclipse.jdt.core.prefs
+!.settings/org.eclipse.jdt.ui.prefs
+!.settings/edu.umd.cs.findbugs.core.prefs
+!.settings/sf.eclipse.javacc.prefs
+
+styles.css
