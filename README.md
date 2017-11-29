@@ -1,52 +1,41 @@
 slow grid sample
 ================
 
-Template for a simple Vaadin application that only requires a Servlet 3.0 container to run.
+A sample project to demonstrate the slowness of the grid being generated (rendered) in the browser using the basic Vaadin template with the latest Vaadin 8.1.6 release.
+
+Vaadin Issue #10232 on GitHub: https://github.com/vaadin/framework/issues/10232 
 
 
-Workflow
-========
+Performance Results:
+====================
 
-To compile the entire project, run "mvn install".
+1. Run the application, run "mvn jetty:run" and open http://localhost:8080/
 
-To run the application, run "mvn jetty:run" and open http://localhost:8080/ .
+
+Performance
+===========
+
+Grid with 80 columns and 1000 rows:
+-----------------------------------
+Tested on local browser with 64 Bit on Windows 7 64 Bit OS - no slow test VMs.
+
+||Browser||V8.1.6 Grid||
+|Chrome|~ 3 seconds|
+|Firefox 55|>12s|
+|IE11|~ 6 seconds|
+
+Additional test notes: Firefox reported a script still running warning error.
+
+
+Project Usage
+=============
+
+To compile the entire project, run "mvn install" using Maven > 3.
+
+To run the application, run "mvn jetty:run" and open http://localhost:8080/ 
+- then change the columns, hidden columns and rows to your liking and generate the grid after hiding it
 
 To produce a deployable production mode WAR:
 - change productionMode to true in the servlet class configuration (nested in the UI class)
 - run "mvn clean package"
 - test the war file with "mvn jetty:run-war"
-
-Client-Side compilation
--------------------------
-
-The generated maven project is using an automatically generated widgetset by default. 
-When you add a dependency that needs client-side compilation, the maven plugin will 
-automatically generate it for you. Your own client-side customisations can be added into
-package "client".
-
-Debugging client side code
-  - run "mvn vaadin:run-codeserver" on a separate console while the application is running
-  - activate Super Dev Mode in the debug window of the application
-
-Developing a theme using the runtime compiler
--------------------------
-
-When developing the theme, Vaadin can be configured to compile the SASS based
-theme at runtime in the server. This way you can just modify the scss files in
-your IDE and reload the browser to see changes.
-
-To use the runtime compilation, open pom.xml and comment out the compile-theme 
-goal from vaadin-maven-plugin configuration. To remove a possibly existing 
-pre-compiled theme, run "mvn clean package" once.
-
-When using the runtime compiler, running the application in the "run" mode 
-(rather than in "debug" mode) can speed up consecutive theme compilations
-significantly.
-
-It is highly recommended to disable runtime compilation for production WAR files.
-
-Using Vaadin pre-releases
--------------------------
-
-If Vaadin pre-releases are not enabled by default, use the Maven parameter
-"-P vaadin-prerelease" or change the activation default value of the profile in pom.xml .
