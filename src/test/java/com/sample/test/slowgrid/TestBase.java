@@ -16,6 +16,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.ButtonElement;
 import com.vaadin.testbench.elements.GridElement;
+import com.vaadin.testbench.elements.LabelElement;
 import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
@@ -44,8 +45,8 @@ public class TestBase extends TestBenchTestCase {
         // update baseUrl to point to where the app is deployed.
         String pageSource = getDriver().getPageSource();
         String errorMsg = "Application is not available at " + baseUrl + ". Server not started?";
-        assertFalse(errorMsg, pageSource.contains("HTTP Status 404") ||
-                pageSource.contains("can't establish a connection to the server"));
+        assertFalse(errorMsg, pageSource.contains("HTTP Status 404")
+        		|| pageSource.contains("can't establish a connection to the server"));
     }
 
     @After
@@ -57,6 +58,11 @@ public class TestBase extends TestBenchTestCase {
         // the error occurred, you'll need to add the ScreenshotOnFailureRule
         // to your test and remove this call to quit().
     	getDriver().quit();
+    }
+    
+    private String getVaadinVersionfromHiddenLabel() {
+    	String replaceme = "Grid Test with Vaadin Version: ";
+        return $(LabelElement.class).id("vaadinVersionLabel").getText().replace(replaceme, "");
     }
     
     private WebElement getGridButton() {
@@ -98,10 +104,13 @@ public class TestBase extends TestBenchTestCase {
     		fw = new FileWriter(resultsFile, true); // append to file
     	} else {
     		fw = new FileWriter(resultsFile, true); // append to file
-    		fw.write("Browser|Grid|RenderTime|RequestTime");
+    		fw.write("|Browser|Vaadin Version|Grid Size (C,HC,R)|Render Time (ms)|Request Time (ms)|");
+    		fw.write(System.getProperty("line.separator")); // newline
+    		fw.write("|-------|--------------|------------------|----------------|-----------------|");
     		fw.write(System.getProperty("line.separator")); // newline
     	}
     	getDriver().get(baseUrl + "?restartApplication");
+    	String vaadinVersion = getVaadinVersionfromHiddenLabel();
     	
     	clickGridButton(); // hides the grid
     	
@@ -119,8 +128,8 @@ public class TestBase extends TestBenchTestCase {
 //                + "ms in servlets service method.");
 
         long totalTimeSpentRendering = testBench().totalTimeSpentRendering();
-        String out = MessageFormat.format("{0} : Rendering Grid ({1,number,#}, {2,number,#}, {3,number,#}) took {4,number,#} ms. (server request: {5,number,#} ms)",
-        		browser, columns, hiddenColumns, rows, totalTimeSpentRendering, timeSpentByServerForServicingGridRequest);
+        String out = MessageFormat.format("|{0}|{1}|({2,number,#}, {3,number,#}, {4,number,#})|{5,number,#}|{6,number,#}|",
+        		browser, vaadinVersion, columns, hiddenColumns, rows, totalTimeSpentRendering, timeSpentByServerForServicingGridRequest);
         fw.write(out);
         fw.write(System.getProperty("line.separator")); // newline
         System.out.println(out);

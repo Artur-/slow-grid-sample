@@ -42,6 +42,8 @@ public class MyUI extends UI {
 	}
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final String vaadinVersion = com.vaadin.shared.Version.getFullVersion();
 
 	private TextField tfColumns;
 	private TextField tfHiddenColumns;
@@ -55,8 +57,11 @@ public class MyUI extends UI {
 
 		final VerticalLayout vertLayout = new VerticalLayout();
 		vertLayout.setSizeFull();
-		vertLayout.addComponent(new Label("Grid Test with Vaadin Version: " +
-				com.vaadin.shared.Version.getFullVersion()));
+
+		// Adding Vaadin version label
+		Label versionLabel = new Label("Grid Test with Vaadin Version: " + vaadinVersion);
+		versionLabel.setId("vaadinVersionLabel");
+		vertLayout.addComponent(versionLabel);
 
 		tfColumns = new TextField();
 		tfColumns.setCaption("column count");
@@ -110,6 +115,8 @@ public class MyUI extends UI {
 		vertLayout.setSpacing(true);
 
 		setContent(vertLayout);
+		
+		getPage().setTitle("Vaadin Grid Performance Test");
 	}
 
 	private void buildGrid() {
