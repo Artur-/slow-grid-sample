@@ -1,7 +1,7 @@
 slow grid sample
 ================
 
-A sample project to demonstrate the slowness of the grid being generated (rendered) in the browser using the basic Vaadin template with the latest Vaadin 8.1.6 release.
+A sample project to demonstrate the slowness of the grid being generated (rendered) in the browser using the basic Vaadin template with the Vaadin 8.1.6 and 8.2.1 release.
 
 Vaadin Issue #10232 on GitHub: https://github.com/vaadin/framework/issues/10232 
 
@@ -71,6 +71,29 @@ Automated test results run locally on 64 Bit browsers on Windows 7 64 Bit OS
 |IE|8.1.6|(100, 0, 1000)|11804|50|
 |IE|8.1.6|(100, 0, 3000)|11929|36|
 |IE|8.1.6|(100, 20, 3000)|18875|41|
+|-------|--------------|------------------|----------------|-----------------|
+|CH|8.1.7|(10, 0, 1000)|1049|0|
+|CH|8.1.7|(100, 0, 1000)|2837|0|
+|CH|8.1.7|(50, 50, 1000)|6538|0|
+|FF|8.1.7|(10, 0, 1000)|2148|0|
+|FF|8.1.7|(100, 0, 1000)|6037|0|
+|FF|8.1.7|(50, 50, 1000)|12238|0|
+|IE|8.1.7|(10, 0, 1000)|2887|0|
+|IE|8.1.7|(100, 0, 1000)|11041|0|
+|IE|8.1.7|(50, 50, 1000)|19261|0|
+|-------|--------------|------------------|----------------|-----------------|
+|CH|8.2.1|(10, 0, 1000)|982|0|
+|CH|8.2.1|(100, 0, 1000)|2720|0|
+|CH|8.2.1|(50, 50, 1000)|1909|0|
+|FF|8.2.1|(10, 0, 1000)|1792|0|
+|FF|8.2.1|(100, 0, 1000)|6065|0|
+|FF|8.2.1|(50, 50, 1000)|5029|0|
+|IE|8.2.1|(10, 0, 1000)|2462|0|
+|IE|8.2.1|(100, 0, 1000)|10637|0|
+|IE|8.2.1|(50, 50, 1000)|7143|0|
+|-------|--------------|------------------|----------------|-----------------|
+
+Hint: Enabling vaadinProductionMode reports Request Time with 0 ms starting with 8.1.7 and 8.2.1 Vaadin.
 
 Used browsers:
 

@@ -36,7 +36,8 @@ import com.vaadin.ui.components.grid.HeaderRow;
 public class MyUI extends UI {
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
+	// switching to productionMode just in case debugging also takes time ... losing request time reportings from server
+	@VaadinServletConfiguration(ui = MyUI.class, productionMode = true)
 	public static class MyUIServlet extends VaadinServlet {
 		private static final long serialVersionUID = 1L;
 	}

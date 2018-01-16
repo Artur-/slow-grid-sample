@@ -11,10 +11,9 @@ public class IT_TestVerifyRenderingTimeChrome extends TestBaseChrome {
     
     @Test
     public void verifyRenderingTimeInChromeWithDifferentGrids() throws Exception {
- 	   verifyRenderingTime(11,1,1000, BROWSER);
+ 	   verifyRenderingTime(10,0,1000, BROWSER);
  	   verifyRenderingTime(100,0,1000, BROWSER);
- 	   verifyRenderingTime(100,0,3000, BROWSER);
- 	   verifyRenderingTime(100,20,3000, BROWSER);
+ 	   verifyRenderingTime(50,50,1000, BROWSER);
     }
 
 }

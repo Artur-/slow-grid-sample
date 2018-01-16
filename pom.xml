@@ -10,8 +10,8 @@
 	<name>slow-grid-sample</name>
 
 	<properties>
-		<vaadin.version>8.1.6</vaadin.version>
-		<vaadin.plugin.version>8.1.6</vaadin.plugin.version>
+		<vaadin.version>8.2.1</vaadin.version>
+		<vaadin.plugin.version>8.2.1</vaadin.plugin.version>
 		<jetty.plugin.version>9.4.7.v20170914</jetty.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -195,6 +195,7 @@
                                <goal>stop</goal>
                            </goals>
                            <configuration>
+                           	   <stopPort>8989</stopPort>
                                <stopKey>stop</stopKey>
                            </configuration>
                        </execution>
