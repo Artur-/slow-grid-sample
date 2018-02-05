@@ -13,7 +13,7 @@ Performance Results:
 
 or
 
-- Run "mvn integration-tests" for automated tests using Testbench (CVAL license required)
+- Run "mvn integration-test" for automated tests using Testbench (CVAL license required)
 
 
 Performance
