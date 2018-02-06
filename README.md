@@ -15,10 +15,47 @@ or
 
 - Run "mvn integration-tests" for automated tests using Testbench (CVAL license required)
 
+Because of incorrent values comming from vaadin performance metrics, we had to redo the test. 'Time Until Rendered' is the new relevant value
+Reported vaadin 'Render Time (ms)' is much lower than real 'Time Until Rendered'. Especially in firefox.
+PERFORMANCE NEW
+===============
+|Browser|Vaadin Version|Grid Size (C,HC,R)|Render Time (ms)|Request Time (ms)| Time Until Rendered
+|-------|--------------|------------------|----------------|-----------------|
+|CH|8.4-SNAPSHOT|(11, 1, 1000)|652|15|415
+|CH|8.4-SNAPSHOT|(100, 0, 1000)|1519|32|1850
+|CH|8.4-SNAPSHOT|(100, 0, 3000)|1580|25|1838
+|CH|8.4-SNAPSHOT|(100, 20, 3000)|1663|30|1937
+|FF|8.4-SNAPSHOT|(11, 1, 1000)|1189|4|1177
+|FF|8.4-SNAPSHOT|(100, 0, 1000)|3660|17|23565
+|FF|8.4-SNAPSHOT|(100, 0, 3000)|3725|16|23982
+|FF|8.4-SNAPSHOT|(100, 20, 3000)|4288|25|24669
+|IE|8.4-SNAPSHOT|(11, 1, 1000)|1035|6|1248
+|IE|8.4-SNAPSHOT|(100, 0, 1000)|3548|21|8186
+|IE|8.4-SNAPSHOT|(100, 0, 3000)|789|1|1028
+|IE|8.4-SNAPSHOT|(100, 20, 3000)|3805|15|8322
 
-Performance
-===========
+Used browsers:
 
+Chrome 63.0.3239.108 (64 bit)
+Firefox 57.0.4 (64 Bit)
+Internet Explorer 11.0.9600.18893 (64 Bit)
+
+Grid with 80 columns and 1000 rows:
+-----------------------------------
+Manually tested on local browser with 64 Bit on Windows 7 64 Bit OS - no slow test VMs.
+
+|Browser   |V8.1.6 Grid|
+|----------|-----------|
+|Chrome    |~ 3 seconds|
+|Firefox 55|>12s       |
+|IE11      |~ 6 seconds|
+
+Additional test notes: Firefox reported an error because the script was still running.
+
+
+
+Performance OLD
+===============
 Automated test results run locally on 64 Bit browsers on Windows 7 64 Bit OS
 
 |Browser|Vaadin Version|Grid Size (C,HC,R)|Render Time (ms)|Request Time (ms)|

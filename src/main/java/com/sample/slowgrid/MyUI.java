@@ -59,14 +59,14 @@ public class MyUI extends UI {
     public static class LatencyFilter implements Filter {
 
         private static long currentTime;
-        private static long numberOfVisoibleColls;
+        private static long numberOfVisibleColls;
         private static long numberOfHiddenColls;
         private static long numberOfRows;
         private static String webBrowser;
 
-        public static void setGridConfiguration(long currentTime, int numberOfVisoibleColls, int numberOfHiddenColls, int numberOfRows, String wb) {
+        public static void setGridConfiguration(long currentTime, int numberOfVisibleColls, int numberOfHiddenColls, int numberOfRows, String wb) {
             LatencyFilter.currentTime = currentTime;
-            LatencyFilter.numberOfVisoibleColls = numberOfVisoibleColls;
+            LatencyFilter.numberOfVisibleColls = numberOfVisibleColls;
             LatencyFilter.numberOfHiddenColls = numberOfHiddenColls;
             LatencyFilter.numberOfRows = numberOfRows;
             LatencyFilter.webBrowser = wb;
@@ -82,7 +82,7 @@ public class MyUI extends UI {
             //hsr.getRequestURL()+ "?" + hsr.getQueryString()
             if (currentTime > 0) {
                 String out = MessageFormat.format("{0}|({1,number,#}, {2,number,#}, {3,number,#})|{4,number,#}",
-                        webBrowser, numberOfVisoibleColls, numberOfHiddenColls, numberOfRows, ((System.nanoTime() - currentTime) / 1000000));
+                        webBrowser, numberOfVisibleColls, numberOfHiddenColls, numberOfRows, ((System.nanoTime() - currentTime) / 1000000));
                 currentTime = -1;
                 System.out.println(out);
             }
