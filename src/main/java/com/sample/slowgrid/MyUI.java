@@ -249,5 +249,4 @@ public class MyUI extends UI {
     private double getRandomColumnWidth() {
         return 80.0 + Math.random() * 220;
     }
-
 }

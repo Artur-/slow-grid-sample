@@ -13,6 +13,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elements.ButtonElement;
 import com.vaadin.testbench.elements.GridElement;
 import com.vaadin.testbench.elements.LabelElement;
@@ -39,6 +40,8 @@ public class TestBase extends TestBenchTestCase {
         // Open the test application URL with the ?restartApplication URL
         // parameter to ensure Vaadin provides us with a fresh UI instance.
         getDriver().get(baseUrl + "?restartApplication");
+        // Set a fixed view port of 1024x768 pixels for comparison
+        ((TestBenchCommands)driver).resizeViewPortTo( 1280, 1024 );
 
         // If you deploy using WTP in Eclipse, this will fail. You should
         // update baseUrl to point to where the app is deployed.
