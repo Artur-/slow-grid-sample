@@ -19,4 +19,18 @@
                 <goal>jetty:run</goal>
             </goals>
         </action>
+        <action>
+            <actionName>CUSTOM-integration-tests</actionName>
+            <displayName>integration-tests</displayName>
+            <goals>
+                <goal>integration-tests</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-jetty:effective-web-xml</actionName>
+            <displayName>jetty:effective-web-xml</displayName>
+            <goals>
+                <goal>jetty:effective-web-xml</goal>
+            </goals>
+        </action>
     </actions>
