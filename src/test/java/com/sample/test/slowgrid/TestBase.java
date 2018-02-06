@@ -106,9 +106,9 @@ public class TestBase extends TestBenchTestCase {
     		fw = new FileWriter(resultsFile, true); // append to file
     	} else {
     		fw = new FileWriter(resultsFile, true); // append to file
-    		fw.write("|Browser|Vaadin Version|Grid Size (C,HC,R)|Render Time (ms)|Request Time (ms)| Time Until Rendered");
+    		fw.write("|Browser|Vaadin Version|Grid Size (C,HC,R)|Render Time (ms)|Request Time (ms)| Time Until Rendered |");
     		fw.write(System.getProperty("line.separator")); // newline
-    		fw.write("|-------|--------------|------------------|----------------|-----------------|");
+    		fw.write("|-------|--------------|------------------|----------------|-----------------|---------------------|");
     		fw.write(System.getProperty("line.separator")); // newline
     	}
     	getDriver().get(baseUrl + "?restartApplication");
@@ -136,7 +136,7 @@ public class TestBase extends TestBenchTestCase {
 
         long totalTimeSpentRendering = testBench().totalTimeSpentRendering();
         
-        String out = MessageFormat.format("|{0}|{1}|({2,number,#}, {3,number,#}, {4,number,#})|{5,number,#}|{6,number,#}|{7,number,#}",
+        String out = MessageFormat.format("|{0}|{1}|({2,number,#}, {3,number,#}, {4,number,#})|{5,number,#}|{6,number,#}|{7,number,#}|",
         		browser, vaadinVersion, columns, hiddenColumns, rows, totalTimeSpentRendering, timeSpentByServerForServicingGridRequest, startGrid);
         fw.write(out);
         fw.write(System.getProperty("line.separator")); // newline
