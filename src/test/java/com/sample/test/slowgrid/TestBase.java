@@ -1,8 +1,7 @@
 package com.sample.test.slowgrid;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-// import static org.junit.Assert.fail;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -104,13 +103,14 @@ public class TestBase extends TestBenchTestCase {
     		fw = new FileWriter(resultsFile, true); // append to file
     	} else {
     		fw = new FileWriter(resultsFile, true); // append to file
-    		fw.write("|Browser|Vaadin Version|Grid Size (C,HC,R)|Render Time (ms)|Request Time (ms)|");
+    		fw.write("|Browser|Vaadin Version|Grid Size (C,HC,R)|Render Time (ms)|Request Time (ms)| Time Until Rendered");
     		fw.write(System.getProperty("line.separator")); // newline
     		fw.write("|-------|--------------|------------------|----------------|-----------------|");
     		fw.write(System.getProperty("line.separator")); // newline
     	}
     	getDriver().get(baseUrl + "?restartApplication");
     	String vaadinVersion = getVaadinVersionfromHiddenLabel();
+    	//String vaadinVersion = "xxx";
     	
     	clickGridButton(); // hides the grid
     	
@@ -118,18 +118,23 @@ public class TestBase extends TestBenchTestCase {
                 .totalTimeSpentServicingRequests();
         
         setGridValues(columns,hiddenColumns,rows);
+        long startGrid = System.currentTimeMillis();
         clickGridButton(); // builds the grid with specified columns, hidden columns and rows
-
+      
+        testBench().waitForVaadin();
+        startGrid = System.currentTimeMillis() - startGrid;
         long timeSpentByServerForServicingGridRequest = testBench()
                 .totalTimeSpentServicingRequests() - currentSessionTime;
+        
 
 //        System.out.println("Building the grid took about "
 //                + timeSpentByServerForSimpleCalculation
 //                + "ms in servlets service method.");
 
         long totalTimeSpentRendering = testBench().totalTimeSpentRendering();
-        String out = MessageFormat.format("|{0}|{1}|({2,number,#}, {3,number,#}, {4,number,#})|{5,number,#}|{6,number,#}|",
-        		browser, vaadinVersion, columns, hiddenColumns, rows, totalTimeSpentRendering, timeSpentByServerForServicingGridRequest);
+        
+        String out = MessageFormat.format("|{0}|{1}|({2,number,#}, {3,number,#}, {4,number,#})|{5,number,#}|{6,number,#}|{7,number,#}",
+        		browser, vaadinVersion, columns, hiddenColumns, rows, totalTimeSpentRendering, timeSpentByServerForServicingGridRequest, startGrid);
         fw.write(out);
         fw.write(System.getProperty("line.separator")); // newline
         System.out.println(out);
@@ -140,6 +145,6 @@ public class TestBase extends TestBenchTestCase {
         }
 
         fw.close();
-        assertEquals("Content #1", getGrid().getCell(0, 1).getText());
+        //assert("Content #1", getGrid().getCell(0, 1).getText());
     }
 }
