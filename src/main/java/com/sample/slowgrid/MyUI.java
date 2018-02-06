@@ -1,4 +1,3 @@
-
 package com.sample.slowgrid;
 
 import java.util.Collection;
@@ -9,8 +8,15 @@ import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.server.Page;
+import com.vaadin.server.RequestHandler;
+import com.vaadin.server.VaadinPortlet;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinResponse;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.server.WebBrowser;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
@@ -24,159 +30,224 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderRow;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Random;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * This UI is the application entry point. A UI may either represent a browser window (or tab) or some part of a html page where a Vaadin
- * application is embedded.
+ * This UI is the application entry point. A UI may either represent a browser
+ * window (or tab) or some part of a html page where a Vaadin application is
+ * embedded.
  * <p>
- * The UI is initialized using {@link #init(VaadinRequest)}. This method is intended to be overridden to add component to the user interface
- * and initialize non-component functionality.
+ * The UI is initialized using {@link #init(VaadinRequest)}. This method is
+ * intended to be overridden to add component to the user interface and
+ * initialize non-component functionality.
  */
 @Theme("mytheme")
 public class MyUI extends UI {
 
-	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
-	public static class MyUIServlet extends VaadinServlet {
-		private static final long serialVersionUID = 1L;
-	}
+    @WebFilter(filterName = "LatencyFilter", servletNames = {"MyUIServlet"})
+    public static class LatencyFilter implements Filter {
 
-	private static final long serialVersionUID = 1L;
-	
-	private static final String vaadinVersion = com.vaadin.shared.Version.getFullVersion();
+        private static long currentTime;
+        private static long numberOfVisoibleColls;
+        private static long numberOfHiddenColls;
+        private static long numberOfRows;
+        private static String webBrowser;
 
-	private TextField tfColumns;
-	private TextField tfHiddenColumns;
-	private TextField tfRows;
+        public static void setGridConfiguration(long currentTime, int numberOfVisoibleColls, int numberOfHiddenColls, int numberOfRows, String wb) {
+            LatencyFilter.currentTime = currentTime;
+            LatencyFilter.numberOfVisoibleColls = numberOfVisoibleColls;
+            LatencyFilter.numberOfHiddenColls = numberOfHiddenColls;
+            LatencyFilter.numberOfRows = numberOfRows;
+            LatencyFilter.webBrowser = wb;
+        }
 
-	private CssLayout gridwrapper;
-	private Grid<GridEntry> grid;
+        @Override
+        public void init(FilterConfig fc) throws ServletException {
+        }
 
-	@Override
-	protected void init(final VaadinRequest vaadinRequest) {
+        @Override
+        public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException, ServletException {
+            HttpServletRequest hsr = (HttpServletRequest) sr;
+            //hsr.getRequestURL()+ "?" + hsr.getQueryString()
+            if (currentTime > 0) {
+                String out = MessageFormat.format("{0}|({1,number,#}, {2,number,#}, {3,number,#})|{4,number,#}",
+                        webBrowser, numberOfVisoibleColls, numberOfHiddenColls, numberOfRows, ((System.nanoTime() - currentTime) / 1000000));
+                currentTime = -1;
+                System.out.println(out);
+            }
+            fc.doFilter(sr, sr1);
+        }
 
-		final VerticalLayout vertLayout = new VerticalLayout();
-		vertLayout.setSizeFull();
+        @Override
+        public void destroy() {
+        }
 
-		// Adding Vaadin version label
-		Label versionLabel = new Label("Grid Test with Vaadin Version: " + vaadinVersion);
-		versionLabel.setId("vaadinVersionLabel");
-		vertLayout.addComponent(versionLabel);
+    }
 
-		tfColumns = new TextField();
-		tfColumns.setCaption("column count");
-		tfColumns.setId("columncount");
-		tfColumns.setValue("10");
-		tfHiddenColumns = new TextField();
-		tfHiddenColumns.setCaption("hidden column count");
-		tfHiddenColumns.setId("hiddencolumncount");
-		tfHiddenColumns.setValue("10");
-		tfRows = new TextField();
-		tfRows.setCaption("row count");
-		tfRows.setId("rowcount");
-		tfRows.setValue("1000");
+    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
+    @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
+    public static class MyUIServlet extends VaadinServlet {
 
-		HorizontalLayout horLayout = new HorizontalLayout();
-		vertLayout.addComponent(horLayout);
+        private static final long serialVersionUID = 1L;
 
-		horLayout.addComponent(tfColumns);
-		horLayout.addComponent(tfHiddenColumns);
-		horLayout.addComponent(tfRows);
+    }
 
-		// Create new Grid with gridEntries
-		final Button hideShowButton = new Button("hide Grid");
-		hideShowButton.setId("gridButton");
-		hideShowButton.addClickListener(event -> {
-			if (grid.isVisible()) {
-				grid.setVisible(false);
-				hideShowButton.setCaption("build Grid");
-			} else {
-				try {
-					buildGrid();
-				} catch (NumberFormatException e) {
-					Notification.show("only numbers allowed for column counts");
-					return;
-				}
-				grid.setVisible(true);
-				hideShowButton.setCaption("hide Grid");
-			}
-		});
-		horLayout.addComponent(hideShowButton);
-		horLayout.setComponentAlignment(hideShowButton, Alignment.BOTTOM_LEFT);
+    private static final long serialVersionUID = 1L;
 
-		gridwrapper = new CssLayout();
-		gridwrapper.setSizeFull();
+    private static final String vaadinVersion = com.vaadin.shared.Version.getFullVersion();
 
-		buildGrid();
+    private TextField tfColumns;
+    private TextField tfHiddenColumns;
+    private TextField tfRows;
 
-		vertLayout.addComponent(gridwrapper);
-		vertLayout.setExpandRatio(gridwrapper, 1);
-		vertLayout.setMargin(true);
-		vertLayout.setSpacing(true);
+    private CssLayout gridwrapper;
+    private Grid<GridEntry> grid;
 
-		setContent(vertLayout);
-		
-		getPage().setTitle("Vaadin Grid Performance Test");
-	}
+    @Override
+    protected void init(final VaadinRequest vaadinRequest) {
 
-	private void buildGrid() {
-		String tfValue = tfColumns.getValue();
-		String tfHiddenValue = tfHiddenColumns.getValue();
-		String tfrowValue = tfRows.getValue();
+        final VerticalLayout vertLayout = new VerticalLayout();
+        vertLayout.setSizeFull();
 
-		int columns = 0;
-		int hiddenColumns = 0;
-		int rows = 0;
+        // Adding Vaadin version label
+        Label versionLabel = new Label("Grid Test with Vaadin Version: " + vaadinVersion);
+        versionLabel.setId("vaadinVersionLabel");
+        vertLayout.addComponent(versionLabel);
 
-		columns = Integer.parseInt(tfValue);
-		hiddenColumns = Integer.parseInt(tfHiddenValue);
-		rows = Integer.parseInt(tfrowValue);
+        tfColumns = new TextField();
+        tfColumns.setCaption("column count");
+        tfColumns.setId("columncount");
+        tfColumns.setValue("10");
+        tfHiddenColumns = new TextField();
+        tfHiddenColumns.setCaption("hidden column count");
+        tfHiddenColumns.setId("hiddencolumncount");
+        tfHiddenColumns.setValue("10");
+        tfRows = new TextField();
+        tfRows.setCaption("row count");
+        tfRows.setId("rowcount");
+        tfRows.setValue("1000");
 
-		Set<GridEntry> gridEntrySet = new LinkedHashSet<>();
+        HorizontalLayout horLayout = new HorizontalLayout();
+        vertLayout.addComponent(horLayout);
 
-		for (int i = 1; i < rows + 1; i++) {
-			gridEntrySet.add(new GridEntry("Content #" + i));
-		}
+        horLayout.addComponent(tfColumns);
+        horLayout.addComponent(tfHiddenColumns);
+        horLayout.addComponent(tfRows);
 
-		Collection<GridEntry> gridEntries = gridEntrySet;
-		grid = new Grid<>("My Test Grid", gridEntries);
+        // Create new Grid with gridEntries
+        final Button hideShowButton = new Button("hide Grid");
+        hideShowButton.setId("gridButton");
+        hideShowButton.addClickListener(event -> {
+            if (grid.isVisible()) {
+                grid.setVisible(false);
+                hideShowButton.setCaption("build Grid");
+            } else {
+                try {
+                    //System.out.println("Time since build grid done:" + (System.nanoTime() - currentTime));
+                    System.out.println("Start render");
+                    WebBrowser wb = Page.getCurrent().getWebBrowser();
+                    LatencyFilter.setGridConfiguration(System.nanoTime(), Integer.parseInt(tfColumns.getValue()), Integer.parseInt(tfHiddenColumns.getValue()), Integer.parseInt(tfRows.getValue()), (wb.isIE()?"IE":(wb.isFirefox()?"FF":"CH")));
+                    buildGrid();
 
-		HeaderRow headerRow = grid.addHeaderRowAt(1);
+                } catch (NumberFormatException e) {
+                    Notification.show("only numbers allowed for column counts");
+                    return;
+                }
+                grid.setVisible(true);
 
-		for (int i = 0; i < columns; i++) {
-			Column<GridEntry, String> col = grid.addColumn(GridEntry::getContent);
-			col.setCaption("Col#" + i);
-			TextField searchField = new TextField();
-			searchField.setHeight("28px");
-			searchField.setWidth("100%");
-			headerRow.getCell(col).setComponent(searchField);
+                hideShowButton.setCaption("hide Grid");
+            }
+        });
 
-			if (i != 0) {
-				col.setWidth(getRandomColumnWidth());
-			}
-		}
+        horLayout.addComponent(hideShowButton);
+        horLayout.setComponentAlignment(hideShowButton, Alignment.BOTTOM_LEFT);
 
-		for (int i = 0; i < hiddenColumns; i++) {
-			Column<GridEntry, String> col = grid.addColumn(GridEntry::getContent).setCaption("hidden #" + i).setHidable(true).setHidden(
-					true);
-			col.setCaption("hCol#" + i);
-			headerRow.getCell(col).setComponent(new TextField());
-		}
+        gridwrapper = new CssLayout();
+        gridwrapper.setSizeFull();
 
-		grid.setColumnReorderingAllowed(true);
-		grid.setFrozenColumnCount(1);
-		grid.setId("testGrid");
-		
-		grid.setSizeFull();
+        buildGrid();
+        tfColumns.setValue("100");
 
-		// Activate multi selection mode
-		grid.setSelectionMode(SelectionMode.MULTI);
+        vertLayout.addComponent(gridwrapper);
+        vertLayout.setExpandRatio(gridwrapper, 1);
+        vertLayout.setMargin(true);
+        vertLayout.setSpacing(true);
 
-		gridwrapper.addComponent(grid);
-	}
+        setContent(vertLayout);
 
-	private double getRandomColumnWidth() {
-		return 80.0 + Math.random() * 220;
-	}
+        getPage().setTitle("Vaadin Grid Performance Test");
+    }
+
+    private void buildGrid() {
+        String tfValue = tfColumns.getValue();
+        String tfHiddenValue = tfHiddenColumns.getValue();
+        String tfrowValue = tfRows.getValue();
+
+        int columns = 0;
+        int hiddenColumns = 0;
+        int rows = 0;
+
+        columns = Integer.parseInt(tfValue);
+        hiddenColumns = Integer.parseInt(tfHiddenValue);
+        rows = Integer.parseInt(tfrowValue);
+
+        Set<GridEntry> gridEntrySet = new LinkedHashSet<>();
+        Random random = new Random();
+
+        for (int i = 1; i < rows + 1; i++) {
+            gridEntrySet.add(new GridEntry("Content #" + i));//+ ":" + random.nextInt()));
+        }
+
+        Collection<GridEntry> gridEntries = gridEntrySet;
+        grid = new Grid<>("My Test Grid", gridEntries);
+
+        HeaderRow headerRow = grid.addHeaderRowAt(1);
+
+        for (int i = 0; i < columns; i++) {
+            Column<GridEntry, String> col = grid.addColumn(GridEntry::getContent);
+            col.setCaption("Col#" + i);
+            TextField searchField = new TextField();
+            searchField.setHeight("28px");
+            searchField.setWidth("100%");
+            headerRow.getCell(col).setComponent(searchField);
+
+            if (i != 0) {
+                col.setWidth(getRandomColumnWidth());
+            }
+        }
+
+        for (int i = 0; i < hiddenColumns; i++) {
+            Column<GridEntry, String> col = grid.addColumn(GridEntry::getContent).setCaption("hidden #" + i).setHidable(true).setHidden(
+                    true);
+            col.setCaption("hCol#" + i);
+            headerRow.getCell(col).setComponent(new TextField());
+        }
+
+        grid.setColumnReorderingAllowed(true);
+        grid.setFrozenColumnCount(1);
+        grid.setId("testGrid");
+
+        grid.setSizeFull();
+
+        // Activate multi selection mode
+        grid.setSelectionMode(SelectionMode.MULTI);
+
+        gridwrapper.addComponent(grid);
+    }
+
+    private double getRandomColumnWidth() {
+        return 80.0 + Math.random() * 220;
+    }
 
 }
