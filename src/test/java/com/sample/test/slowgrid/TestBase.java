@@ -11,13 +11,13 @@ import org.junit.Before;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import com.vaadin.flow.component.button.testbench.ButtonElement;
+import com.vaadin.flow.component.checkbox.testbench.CheckboxElement;
+import com.vaadin.flow.component.grid.testbench.GridElement;
+import com.vaadin.flow.component.html.testbench.LabelElement;
+import com.vaadin.flow.component.textfield.testbench.TextFieldElement;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.commands.TestBenchCommands;
-import com.vaadin.testbench.elements.ButtonElement;
-import com.vaadin.testbench.elements.CheckBoxElement;
-import com.vaadin.testbench.elements.GridElement;
-import com.vaadin.testbench.elements.LabelElement;
-import com.vaadin.testbench.elements.TextFieldElement;
 
 /**
  * Base class for all our tests, allowing us to change the applicable driver,
@@ -90,7 +90,7 @@ public class TestBase extends TestBenchTestCase {
      * Set value in the TextField with id.
      */
     private void setCheckBoxField(final String id, final boolean value) {
-        CheckBoxElement element = $(CheckBoxElement.class).id(id);
+        CheckboxElement element = $(CheckboxElement.class).id(id);
         if (element.isChecked() != value) {
             element.click();
         };
@@ -129,14 +129,14 @@ public class TestBase extends TestBenchTestCase {
 
         clickGridButton(); // hides the grid
 
-        long currentSessionTime = testBench(getDriver())
+        long currentSessionTime = testBench()
                 .totalTimeSpentServicingRequests();
 
         setGridValues(fixedWidths, complexHeader, columns, hiddenColumns, rows);
         long startGrid = System.currentTimeMillis();
         clickGridButton(); // builds the grid with specified columns, hidden columns and rows
 
-        testBench().waitForVaadin();
+        getCommandExecutor().waitForVaadin();
         startGrid = System.currentTimeMillis() - startGrid;
         long timeSpentByServerForServicingGridRequest = testBench()
                 .totalTimeSpentServicingRequests() - currentSessionTime;
