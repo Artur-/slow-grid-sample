@@ -11,14 +11,9 @@ public class IT_TestVerifyRenderingTimeFirefox extends TestBaseFirefox {
 
     @Test
     public void verifyRenderingTimeInFirefoxWithGrid_100_1_000() throws Exception {
-        verifyRenderingTime(true, false, 11, 20, 1000, BROWSER);
-        verifyRenderingTime(true, true, 11, 20, 1000, BROWSER);
-        verifyRenderingTime(true, false, 11, 40, 1000, BROWSER);
-        verifyRenderingTime(true, true, 11, 40, 1000, BROWSER);
-        verifyRenderingTime(false, false, 11, 20, 1000, BROWSER);
-        verifyRenderingTime(false, true, 11, 20, 1000, BROWSER);
-        verifyRenderingTime(false, false, 11, 40, 1000, BROWSER);
-        verifyRenderingTime(false, true, 11, 40, 1000, BROWSER);
+        verifyRenderingTime(true, false, 20, 15, 1000, BROWSER);
+        verifyRenderingTime(true, true, 20, 15, 1000, BROWSER);
+        verifyRenderingTime(false, true, 20, 15, 1000, BROWSER);
     }
 
 }

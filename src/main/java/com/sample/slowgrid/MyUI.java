@@ -1,21 +1,27 @@
 package com.sample.slowgrid;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Random;
 import java.util.Set;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.Page;
-import com.vaadin.server.RequestHandler;
-import com.vaadin.server.VaadinPortlet;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinResponse;
-import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WebBrowser;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -39,20 +45,6 @@ import com.vaadin.ui.components.grid.ColumnVisibilityChangeListener;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.components.grid.ItemClickListener;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Random;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * This UI is the application entry point. A UI may either represent a browser
  * window (or tab) or some part of a html page where a Vaadin application is
@@ -65,6 +57,11 @@ import javax.servlet.http.HttpServletResponse;
 @Theme("mytheme")
 public class MyUI extends UI {
 
+	// define basic grid details here:
+    private static int gridNumCols = 20;
+    private static long gridNumHidCols = 15;
+    private static long gridRows = 1000;
+	
     @WebFilter(filterName = "LatencyFilter", servletNames = {"MyUIServlet"})
     public static class LatencyFilter implements Filter {
 
@@ -92,11 +89,13 @@ public class MyUI extends UI {
 
         @Override
         public void doFilter(ServletRequest sr, ServletResponse sr1, FilterChain fc) throws IOException, ServletException {
-            HttpServletRequest hsr = (HttpServletRequest) sr;
-            //hsr.getRequestURL()+ "?" + hsr.getQueryString()
             if (currentTime > 0) {
+            	long timeTakenToRender = ((System.nanoTime() - currentTime) / 1000000);
                 String out = MessageFormat.format("{0}|{1}|{2}|({3,number,#}, {4,number,#}, {5,number,#})|{6,number,#}",
-                        webBrowser, fixedWidth, complexHeader, numberOfVisibleColls, numberOfHiddenColls, numberOfRows, ((System.nanoTime() - currentTime) / 1000000));
+                        webBrowser, fixedWidth, complexHeader, numberOfVisibleColls, numberOfHiddenColls, numberOfRows, timeTakenToRender);
+                if (timeTakenToRender > 1000) {
+                	out = out + " (Rendering Time above ideal 1 second!)";
+                }
                 currentTime = -1;
                 System.out.println(out);
             }
@@ -144,21 +143,23 @@ public class MyUI extends UI {
         tfColumns = new TextField();
         tfColumns.setCaption("column count");
         tfColumns.setId("columncount");
-        tfColumns.setValue("10");
+        tfColumns.setValue(String.valueOf(gridNumCols));
         tfHiddenColumns = new TextField();
         tfHiddenColumns.setCaption("hidden column count");
         tfHiddenColumns.setId("hiddencolumncount");
-        tfHiddenColumns.setValue("10");
+        tfHiddenColumns.setValue(String.valueOf(gridNumHidCols));
         tfRows = new TextField();
         tfRows.setCaption("row count");
         tfRows.setId("rowcount");
-        tfRows.setValue("1000");
+        tfRows.setValue(String.valueOf(gridRows));
         cbFixedWidth = new CheckBox();
         cbFixedWidth.setId("cbfixedwidth");
         cbFixedWidth.setCaption("fixed column widths");
         cbComplexHeader = new CheckBox();
         cbComplexHeader.setId("cbcomplexheader");
         cbComplexHeader.setCaption("complex header");
+        // turn complex headers with filters on by default
+        cbComplexHeader.setValue(true);
         
         VerticalLayout vertLayoutInner = new VerticalLayout();
         vertLayoutInner.addComponent(cbFixedWidth);
@@ -207,7 +208,6 @@ public class MyUI extends UI {
         gridwrapper.setSizeFull();
 
         buildGrid();
-        tfColumns.setValue("100");
 
         vertLayout.addComponent(gridwrapper);
         vertLayout.setExpandRatio(gridwrapper, 1);
@@ -221,12 +221,12 @@ public class MyUI extends UI {
 
     private Component createHeaderComponent(int i) {
         Component searchField = null;
-        if (true || i % 3 == 4) {
+        if (i % 3 == 1) {
             searchField = new DateTimeField();
             searchField.setHeight("28px");
             searchField.setWidth("100%");
-        } else if (true || i % 3 == 2) {
-            searchField = new ComboBox("", Arrays.asList("val1", "val2", "val3", "val4"));
+        } else if (i % 3 == 2) {
+            searchField = new ComboBox<String>("", Arrays.asList("val1", "val2", "val3", "val4"));
             searchField.setHeight("28px");
             searchField.setWidth("100%");
         } else {
@@ -263,6 +263,7 @@ public class MyUI extends UI {
         grid = new Grid<>("My Test Grid", gridEntries);
 
         HeaderRow headerRow = null;
+        
         if (complexHeader) {
             headerRow = grid.addHeaderRowAt(1);
         }
@@ -271,6 +272,7 @@ public class MyUI extends UI {
             Column<GridEntry, String> col = grid.addColumn(GridEntry::getContent).setHidable(true);
             col.setCaption("Col#" + i);
             if (complexHeader) {
+            	assert headerRow != null : "HeaderRow NullCheck";
                 headerRow.getCell(col).setComponent(createHeaderComponent(i));
             }
 
@@ -284,6 +286,7 @@ public class MyUI extends UI {
                     true);
             col.setCaption("hCol#" + i);
             if (complexHeader) {
+            	assert headerRow != null : "HeaderRow NullCheck";
                 headerRow.getCell(col).setComponent(createHeaderComponent(i));
             }
         }
@@ -298,12 +301,16 @@ public class MyUI extends UI {
         grid.setSelectionMode(SelectionMode.MULTI);
         grid.addColumnVisibilityChangeListener(new ColumnVisibilityChangeListener() {
 			
+			private static final long serialVersionUID = 1L;
+
 			public void columnVisibilityChanged(ColumnVisibilityChangeEvent event) {
 				System.out.println("Visibility change");
 				
 			}
 		});
         grid.addItemClickListener(new ItemClickListener<GridEntry>() {
+
+			private static final long serialVersionUID = 1L;
 
 			public void itemClick(ItemClick<GridEntry> event) {
 				System.out.println("Clicked!!");
