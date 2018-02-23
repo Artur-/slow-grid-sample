@@ -47,7 +47,7 @@ import com.vaadin.ui.components.grid.ItemClickListener;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
- * window (or tab) or some part of a html page where a Vaadin application is
+ * window (or tab) or some part of a HTML page where a Vaadin application is
  * embedded.
  * <p>
  * The UI is initialized using {@link #init(VaadinRequest)}. This method is
@@ -94,7 +94,7 @@ public class MyUI extends UI {
                 String out = MessageFormat.format("{0}|{1}|{2}|({3,number,#}, {4,number,#}, {5,number,#})|{6,number,#}",
                         webBrowser, fixedWidth, complexHeader, numberOfVisibleColls, numberOfHiddenColls, numberOfRows, timeTakenToRender);
                 if (timeTakenToRender > 1000) {
-                	out = out + " (Rendering Time above ideal 1 second!)";
+                	out = out + "\n !!! Rendering took more than 1 second! !!!";
                 }
                 currentTime = -1;
                 System.out.println(out);
@@ -139,6 +139,10 @@ public class MyUI extends UI {
         Label versionLabel = new Label("Grid Test with Vaadin Version: " + vaadinVersion);
         versionLabel.setId("vaadinVersionLabel");
         vertLayout.addComponent(versionLabel);
+        
+        Label descriptionLabel = new Label("Default setup uses the slowest combination of variable width columns and complex headers aka one row of filter columns with TextField, DateField or ComboBox.");
+        descriptionLabel.setId("vaadinVersionLabel");
+        vertLayout.addComponent(descriptionLabel);
 
         tfColumns = new TextField();
         tfColumns.setCaption("column count");
@@ -173,8 +177,6 @@ public class MyUI extends UI {
         horLayout.addComponent(tfRows);
         horLayout.addComponent(vertLayoutInner);
         horLayout.setComponentAlignment(vertLayoutInner, Alignment.TOP_LEFT);
-        
-        
 
         // Create new Grid with gridEntries
         final Button hideShowButton = new Button("hide Grid");
@@ -198,6 +200,7 @@ public class MyUI extends UI {
                 grid.setVisible(true);
 
                 hideShowButton.setCaption("hide Grid");
+                hideShowButton.setDescription("Click hide/show Grid button to render the grid and measure times");
             }
         });
 
@@ -322,6 +325,7 @@ public class MyUI extends UI {
 
         gridwrapper.addComponent(grid);
     }
+    
     //test runs must be equal
     private Random rr = new Random(7);
 

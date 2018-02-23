@@ -141,9 +141,6 @@ public class TestBase extends TestBenchTestCase {
         long timeSpentByServerForServicingGridRequest = testBench()
                 .totalTimeSpentServicingRequests() - currentSessionTime;
 
-//        System.out.println("Building the grid took about "
-//                + timeSpentByServerForSimpleCalculation
-//                + "ms in servlets service method.");
         long totalTimeSpentRendering = testBench().totalTimeSpentRendering();
 
         String out = MessageFormat.format("|{0}|{1}|{2}|{3}|({4,number,#}, {5,number,#}, {6,number,#})|{7,number,#}|{8,number,#}|{9,number,#}|",
@@ -160,4 +157,21 @@ public class TestBase extends TestBenchTestCase {
         fw.close();
         assert(getGrid().getCell(0, 1).getText().contains("Content Longer #1"));
     }
+    
+    /**
+     * Clicks the hide Grid and then show Grid button. (times to render is taken by the application in LatencyFilter).
+     *
+     * @throws Exception an Exception during tests
+     */
+    public void clickHideAndShowGridButton(final boolean fixedWidths, final boolean complexHeader, final int columns, final int hiddenColumns, final int rows, final String browser) throws Exception {
+
+        getDriver().get(baseUrl + "?restartApplication");
+
+        clickGridButton(); // hides the grid
+        setGridValues(fixedWidths, complexHeader, columns, hiddenColumns, rows); // setup grid values
+        clickGridButton(); // renders the grid
+        
+        assert(getGrid().getCell(0, 1).getText().contains("Content Longer #1"));
+    }
+    
 }

@@ -10,7 +10,9 @@
 	<name>slow-grid-sample</name>
 
 	<properties>
+		<!-- The Vaadin version to use -->
 		<vaadin.version>8.3.1</vaadin.version>
+		
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 		<jetty.plugin.version>9.4.7.v20170914</jetty.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,6 +20,12 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<!-- If there are no local customisations, this can also be "fetch" or "cdn" -->
 		<vaadin.widgetset.mode>local</vaadin.widgetset.mode>
+		
+		<!-- selenium version for Testbench -->
+		<selenium.version>3.4.0</selenium.version>
+		
+		<!-- JUnit version -->
+		<junit.version>4.12</junit.version>
 	</properties>
 
 	<repositories>
@@ -40,13 +48,6 @@
 	</dependencyManagement>
 
 	<dependencies>
-                <!--REQUIRED TO RUN VAADIN 8.4-SNAPSHOT -->
-                <!--dependency>
-                    <groupId>com.google.gwt</groupId>
-                    <artifactId>gwt-servlet</artifactId>
-                    <version>2.8.2</version>
-                    <scope>runtime</scope>
-                </dependency-->
             
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -73,19 +74,19 @@
 		<dependency>
 		    <groupId>org.seleniumhq.selenium</groupId>
 		    <artifactId>selenium-java</artifactId>
-		    <version>3.7.1</version>
+		    <version>${selenium.version}</version>
 		</dependency>
 		
 		<dependency>
 		    <groupId>org.seleniumhq.selenium</groupId>
 		    <artifactId>selenium-remote-driver</artifactId>
-		    <version>3.7.1</version>
+		    <version>${selenium.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		
