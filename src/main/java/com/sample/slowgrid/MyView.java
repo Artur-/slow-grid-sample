@@ -32,6 +32,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.Version;
@@ -42,7 +43,8 @@ import com.vaadin.flow.theme.lumo.Lumo;
 
 @Route("")
 @Theme(Lumo.class)
-public class MyView extends Div {
+@BodySize(height = "100vh", width = "100vw")
+public class MyView extends VerticalLayout {
 
     // define basic grid details here:
     private static int gridNumCols = 20;
@@ -111,18 +113,15 @@ public class MyView extends Div {
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        final VerticalLayout vertLayout = new VerticalLayout();
-        vertLayout.setSizeFull();
-
         // Adding Vaadin version label
         Label versionLabel = new Label("Grid Test with Vaadin Version: " + vaadinVersion);
         versionLabel.setId("vaadinVersionLabel");
-        vertLayout.add(versionLabel);
+        add(versionLabel);
 
         Label descriptionLabel = new Label(
                 "Default setup uses the slowest combination of variable width columns and complex headers aka one row of filter columns with TextField, DateField or ComboBox.");
         descriptionLabel.setId("vaadinVersionLabel");
-        vertLayout.add(descriptionLabel);
+        add(descriptionLabel);
 
         tfColumns = new TextField();
         tfColumns.setLabel("column count");
@@ -150,7 +149,7 @@ public class MyView extends Div {
         vertLayoutInner.add(cbComplexHeader);
 
         HorizontalLayout horLayout = new HorizontalLayout();
-        vertLayout.add(horLayout);
+        add(horLayout);
 
         horLayout.add(tfColumns);
         horLayout.add(tfHiddenColumns);
@@ -190,16 +189,14 @@ public class MyView extends Div {
         //        horLayout.setComponentAlignment(hideShowButton, Alignment.TOP_LEFT);
 
         gridwrapper = new Div();
-        gridwrapper.setSizeFull();
+        gridwrapper.setWidth("100%");
 
         buildGrid();
 
-        vertLayout.add(gridwrapper);
-        vertLayout.setFlexGrow(1, gridwrapper);
-        vertLayout.setMargin(true);
-        vertLayout.setSpacing(true);
-
-        add(vertLayout);
+        add(gridwrapper);
+        setFlexGrow(1, gridwrapper);
+        setPadding(true);
+        setSpacing(true);
 
         getUI().get().getPage().setTitle("Vaadin Grid Performance Test");
     }
@@ -283,8 +280,8 @@ public class MyView extends Div {
         grid.getColumns().get(0).setFrozen(true);
         grid.setId("testGrid");
 
-        grid.setSizeFull();
-
+        grid.setWidth("100%");
+        grid.setHeight("600px");
         // Activate multi selection mode
         grid.setSelectionMode(SelectionMode.MULTI);
         //        grid.addColumnVisibilityChangeListener(new ColumnVisibilityChangeListener() {
